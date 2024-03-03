@@ -30,7 +30,10 @@ functions:
       - Effect: "Allow"
         Action:
           - "dynamodb:PutItem"
-        Resource: !GetAtt PostsTable.Arn
+          - "lambda:InvokeFunction"
+        Resource:
+          - "arn:aws:dynamodb:ap-south-1:*:*"
+          - "arn:aws:lambda:ap-south-1:*:*"
 
 resources:
   Resources:
