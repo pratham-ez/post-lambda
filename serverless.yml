@@ -1,0 +1,63 @@
+service: fir-post-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: prod
+  region: ap-south-1
+  apiName: ${self:service}
+  memorySize: 128 # MB
+  timeout: 10 # Seconds
+  environment:
+    DYNAMODB_POSTS_TABLE_NAME: ${self:custom.postsTableName}
+
+custom:
+  postsTableName: posts-table-${self:provider.stage}
+
+plugins:
+  - serverless-iam-roles-per-function
+
+functions:
+  createPost:
+    handler: src/post_lamda.handler
+    name: create-fir-post
+    description: A lambda handler that creates a post based on an API Gateway trigger, and stores info in a DynamoDB table.
+    events:
+      - http:
+          path: /users/{userId}/post-fir
+          method: POST
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resource: !GetAtt PostsTable.Arn
+
+resources:
+  Resources:
+    PostsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.postsTableName}
+        AttributeDefinitions:
+          - AttributeName: postId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: postId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: userPostsIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: postId
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 1
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 1

@@ -1,0 +1,14 @@
+{
+  "name": "post-lambda",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/pratham-ez/post-lambda.git",
+  "author": "hiteshshimpi <shimpihitesh2@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.525.0",
+    "@aws-sdk/util-dynamodb": "^3.525.0",
+    "aws-sdk": "^2.1569.0",
+    "serverless-iam-roles-per-function": "^3.2.0"
+  }
+}
