@@ -62,6 +62,7 @@ module.exports.handler = async (event) => {
       message: "Successfully created post.",
       postId: postId,
       post: itemToBeStored,
+      assetManagerResponse: responseBody,
     });
   } catch (e) {
     console.error(e);
